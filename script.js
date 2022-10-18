@@ -1,6 +1,8 @@
 // Esse tipo de comentário que estão antes de todas as funções são chamados de JSdoc,
 // experimente passar o mouse sobre o nome das funções e verá que elas possuem descrições!
 
+// const { fetchItem } = require('./helpers/fetchItem');
+
 // const { fetchProducts } = require('./helpers/fetchProducts');
 
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
@@ -61,6 +63,11 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
 const getIdFromProductItem = (product) =>
   product.querySelector('span.id').innerText;
 
+// criando func. requisito 5 revover itens do carrinho 
+const cartItemClickListener = (evento) => {
+evento.target.remove();
+};
+
 /**
  * Função responsável por criar e retornar um item do carrinho.
  * @param {Object} product - Objeto do produto.
@@ -69,6 +76,7 @@ const getIdFromProductItem = (product) =>
  * @param {string} product.price - Preço do produto.
  * @returns {Element} Elemento de um item do carrinho.
  */
+
 const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
@@ -76,15 +84,30 @@ const createCartItemElement = ({ id, title, price }) => {
   li.addEventListener('click', cartItemClickListener);
   return li;
 };
-
+// renderisa o retorno da api
 const renderResults = async () => {
   const datas = await fetchProducts('computador');
   const itens = document.querySelector('.items');
   datas.results.forEach((data) => {
-    const item = createProductItemElement(data);
-    itens.appendChild(item);
-    console.log(item);
+    // const item = createProductItemElement(data);
+    itens.appendChild(createProductItemElement(data));
+    // console.log(item);
   });
 };
-renderResults();
-window.onload = async () => {};
+
+const itemCard = document.querySelector('.cart__items');
+
+const addItens = async (event) => {
+ const idProduct = event.target.parentNode.firstChild.innerText;
+ const data = await fetchItem(idProduct);
+ itemCard.appendChild(createCartItemElement(data));
+//  localStorage.setItem('cartItems', JSON.stringify([]));
+};
+
+window.onload = async () => {
+  await renderResults();
+  const button = document.querySelectorAll('.item__add');
+  button.forEach((element) => {
+    element.addEventListener('click', addItens);
+  });
+};
