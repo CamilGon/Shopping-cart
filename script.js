@@ -102,23 +102,6 @@ const addItens = async (event) => {
  const data = await fetchItem(idProduct);
  itemCard.appendChild(createCartItemElement(data));
 //  localStorage.setItem('cartItems', JSON.stringify([]));
-const recebeData = JSON.parse(localStorage.getItem('cartItems'));
-  recebeData.push(data);
-  saveCartItems(JSON.stringify(recebeData)); 
-};
-// comando remove item localStorage.clear();
-// salva o carrinho no local store
-const carrHistorico = document.getElementsByClassName('cart__items')[0];
-const renderCarrHist = () => {   
- if (!localStorage.getItem('cartItems')) {
-    localStorage.setItem('cartItems', JSON.stringify([]));
-  } else {
-    const listCarr = JSON.parse(localStorage.getItem('cartItems'));
-    const itemCarr = listCarr.length - 1;
-    for (let i = 0; i <= itemCarr; i += 1) {
-      carrHistorico.appendChild(createCartItemElement(listCarr[i]));    
-    }
-  }
 };
 
 window.onload = async () => {
@@ -127,5 +110,4 @@ window.onload = async () => {
   button.forEach((element) => {
     element.addEventListener('click', addItens);
   });
-  renderCarrHist();
 };
