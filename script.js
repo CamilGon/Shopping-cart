@@ -46,6 +46,14 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
 
   return section;
 };
+// calcular preço de produtos 
+const totalPrice = async () => {
+const htmlPrice = document.querySelector('.total-price');
+const listItens = document.querySelectorAll('.cart__item');
+let total = 0;
+listItens.forEach((item) => { total += Number(item.innerText.split('$')[1]); });
+htmlPrice.innerText = `R$ ${total.toFixed(2)}`;
+};
 
 /**
  * Função que recupera o ID do produto passado como parâmetro.
@@ -59,6 +67,7 @@ const cart = JSON.parse(getSavedCartItems('cartItems')) || [];
 const newcart = cart.filter((item) => item.id !== id);
 localStorage.setItem('cartItems', JSON.stringify(newcart));
 evento.target.remove();
+totalPrice();
 };
 
 /**
@@ -96,10 +105,10 @@ const itemCard = document.querySelector('.cart__items');
 const addItemCarrinho = async (evento) => {
 const eventoCarr = evento.target.parentElement.firstChild.innerText;
 const data = await fetchItem(eventoCarr);
-console.log(data);
 addLocalStorage(data);
 const item = createCartItemElement(data);
 itemCard.appendChild(item);
+totalPrice();
 };
 // limpa carrinho
 const clearCart = (event) => {
@@ -107,8 +116,25 @@ const carList = document.querySelector('.cart__items');
 carList.innerText = '';
 event.target.remove();
 localStorage.clear();
+totalPrice();
 };
+// função add mensagem de carregamento na pagina
+const load = () => {
+  const mensagem = document.createElement('h1');
+  mensagem.innerText = 'Carregando...';
+  mensagem.className = '.loading';
+  mensagem.style.margin = 'auto auto';
+  hHeader = document.querySelector('body');
+  hHeader.appendChild(mensagem);
+};
+// remove mensagem de carregamento
+function removeLoad() {
+  body = document.querySelector('body');
+  body.removeChild(document.querySelector('.loading'));
+}
+
 window.onload = async () => {
+  load();
   await renderResults();
   const button = document.querySelectorAll('.item__add');
   button.forEach((element) => element.addEventListener('click', addItemCarrinho));
@@ -119,4 +145,6 @@ window.onload = async () => {
   });
   const buttonLimpar = document.querySelectorAll('.empty-cart');
   buttonLimpar.forEach((element) => element.addEventListener('click', clearCart));
+  removeLoad();
+  totalPrice();
 };
